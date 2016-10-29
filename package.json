@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "debug": "DEBUG=satisfactory:* npm start",
     "build": "browserify public/index.js -o public/build.js",
     "watch": "babel src/index.js -w -o public/index.js"
   },
