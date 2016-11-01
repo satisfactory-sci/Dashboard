@@ -36,7 +36,8 @@ class App extends React.Component {
 
   onClick() {
     let state = this.state.items;
-    state[0].votes.likes += 1;
+    let i =  Math.floor((Math.random() * 10) + 1);
+    state.push({title:"Doctor Weird" + i, img:"http://media.finnkino.fi/1012/Event_11199/portrait_medium/DoctorStrange_1080.jpg", votes: {dislikes: 1, likes: 4, superlikes: i}})
     this.setState({items: state});
   }
 

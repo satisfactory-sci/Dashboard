@@ -24,7 +24,6 @@ class LikeChart extends React.Component {
         bottom: 30,
         left: 40
       };
-    var textSpace = 100;
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight*(3/4) - margin.top - margin.bottom;
 
@@ -95,7 +94,9 @@ class LikeChart extends React.Component {
       //Insert new entries
       this.insert(svg, data, width, x, y);
       //Update old entries
+      svg.exit().remove();
       this.updateGraph(svg, data, width, x, y);
+      svg.exit().remove();
   }
 
   //Function that draws new data entries to the graph
@@ -110,7 +111,7 @@ class LikeChart extends React.Component {
         .attr("y", function(d) { return y(d.label); })
         .attr("width", function(d) { return x(d.dislikes); })
         .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")")
-        .attr("fill", "#f44336")
+        .attr("fill", "#212121")
     //Draw like bar
     svg.selectAll(".bar2")
         .data(data)
@@ -120,8 +121,8 @@ class LikeChart extends React.Component {
         .attr("height", y.bandwidth())
         .attr("y", function(d) { return y(d.label); })
         .attr("width", function(d) { return x(d.likes); })
-        .attr("fill", "#4caf50")
-        .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")");
+        .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")")
+        .attr("fill", "#3e2723")
     //Draw superlike bar
     svg.selectAll(".bar3")
         .data(data)
@@ -131,10 +132,10 @@ class LikeChart extends React.Component {
         .attr("height", y.bandwidth())
         .attr("y", function(d) { return y(d.label); })
         .attr("width", function(d) { return x(d.superlikes); })
-        .attr("fill", "#ffc107")
-        .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")");
-
+        .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")")
+        .attr("fill", "#bf360c")
   }
+
   //Updates the graph by animating the transition
   updateGraph(svg, data, width, x, y) {
     //Animate dislike bar
@@ -150,6 +151,7 @@ class LikeChart extends React.Component {
         .data(data)
         .transition()
         .attr("x", function(d) { return x(d.dislikes); })
+        .attr("height", y.bandwidth())
         .attr("y", function(d) { return y(d.label); })
         .attr("width", function(d) { return x(d.likes); })
 
