@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "debug": "DEBUG=satisfactory:* npm start",
+    "debug": "DEBUG=satisfactory:* npm start"
   },
   "dependencies": {
     "body-parser": "~1.13.2",
@@ -12,7 +12,6 @@
     "d3": "^4.3.0",
     "debug": "~2.2.0",
     "express": "~4.13.1",
-    "jade": "~1.11.0",
     "morgan": "~1.6.1",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",

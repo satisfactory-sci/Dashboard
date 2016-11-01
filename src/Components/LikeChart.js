@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import * as d3 from 'd3';
 
-
+//Stacked Bar Chart
 class LikeChart extends React.Component {
   constructor(props){
     super(props)
@@ -10,10 +10,14 @@ class LikeChart extends React.Component {
     this.componentDidUpdate = this.componentDidUpdate.bind(this)
   }
 
+  //First draw
   componentDidMount() {
+    //Data
     let size = this.props.data.length
     const data = this.props.data
     data.sort(this._sortLikes);
+
+    //Graph's dimensions
     var margin = {
         top: 20,
         right: 20,
@@ -24,6 +28,7 @@ class LikeChart extends React.Component {
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight*(3/4) - margin.top - margin.bottom;
 
+    //Draw canvas
     var svg = d3.select(".wrapper").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -31,34 +36,40 @@ class LikeChart extends React.Component {
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+    //Scales and axis
     var x = d3.scaleLinear().range([0, width*(2/3)]);
     var y = d3.scaleBand().range([height, 0]);
-
     var xAxis = d3.axisTop(x).ticks(10);
     var yAxis = d3.axisLeft(y);
 
+    //Define domains
     x.domain([0, d3.max(data, function(d) { return d.likes + d.dislikes + d.superlikes; })]);
     y.domain(data.map(function(d) { return d.label; }))
       .paddingInner(0.1)
       .paddingOuter(0.5);
 
+    //draw axis
     svg.append("g")
         .attr("class", "x axis")
         .call(xAxis)
         .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")");
-
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
         .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")");
 
+    //Insert initial data
     this.insert(svg, data, width, x, y)
     this.setState({svg: svg});
   }
 
+  //Animation step
   componentDidUpdate() {
+    //Data
       const data = this.props.data
       data.sort(this._sortLikes);
+
+      //Graph's dimensions
       var margin = {
           top: 20,
           right: 20,
@@ -68,24 +79,28 @@ class LikeChart extends React.Component {
       let svg = this.state.svg
       var width = window.innerWidth - margin.left - margin.right;
       var height = window.innerHeight*(3/4) - margin.top - margin.bottom;
+
+      //Scales and axis
       var x = d3.scaleLinear().range([0, width*(2/3)]);
       var y = d3.scaleBand().range([height, 0]);
-
       x.domain([0, d3.max(data, function(d) { return d.likes + d.dislikes + d.superlikes; })]);
       y.domain(data.map(function(d) { return d.label; })).paddingInner(0.1).paddingOuter(0.5);
-
       var xAxis = d3.axisTop(x).ticks(10);
       var yAxis = d3.axisLeft(y);
 
+      //Update Axis
       svg.select('.x.axis').transition().duration(300).call(xAxis);
       svg.select(".y.axis").transition().duration(300).call(yAxis);
 
-      var bars = svg.selectAll(".bar").data(data)
+      //Insert new entries
       this.insert(svg, data, width, x, y);
+      //Update old entries
       this.updateGraph(svg, data, width, x, y);
   }
 
+  //Function that draws new data entries to the graph
   insert(svg, data, width, x, y) {
+    //Draw dislike bar
     svg.selectAll(".bar")
         .data(data)
         .enter().append("rect")
@@ -96,7 +111,7 @@ class LikeChart extends React.Component {
         .attr("width", function(d) { return x(d.dislikes); })
         .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")")
         .attr("fill", "#f44336")
-
+    //Draw like bar
     svg.selectAll(".bar2")
         .data(data)
         .enter().append("rect")
@@ -107,7 +122,7 @@ class LikeChart extends React.Component {
         .attr("width", function(d) { return x(d.likes); })
         .attr("fill", "#4caf50")
         .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")");
-
+    //Draw superlike bar
     svg.selectAll(".bar3")
         .data(data)
         .enter().append("rect")
@@ -120,8 +135,9 @@ class LikeChart extends React.Component {
         .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")");
 
   }
-
+  //Updates the graph by animating the transition
   updateGraph(svg, data, width, x, y) {
+    //Animate dislike bar
     svg.selectAll(".bar")
         .data(data)
         .transition()
@@ -129,6 +145,7 @@ class LikeChart extends React.Component {
         .attr("y", function(d) { return y(d.label); })
         .attr("width", function(d) { return x(d.dislikes); })
 
+    //Animate like bar
     svg.selectAll(".bar2")
         .data(data)
         .transition()
@@ -136,6 +153,7 @@ class LikeChart extends React.Component {
         .attr("y", function(d) { return y(d.label); })
         .attr("width", function(d) { return x(d.likes); })
 
+    //Animate superlike bar
     svg.selectAll(".bar3")
         .data(data)
         .transition()
@@ -145,12 +163,9 @@ class LikeChart extends React.Component {
         .attr("width", function(d) { return x(d.superlikes); })
   }
 
+  //Sorting algorithm for graph
   _sortLikes(a, b) {
     return (a.likes + 2*a.superlikes - a.dislikes) - (b.likes + 2*b.superlikes - b.dislikes);
-  }
-
-  _sortGraph(a, b) {
-    return d3.ascending((a.likes + 2*a.superlikes - a.dislikes), (b.likes + 2*b.superlikes - b.dislikes));
   }
 
   render() {
