@@ -4,7 +4,7 @@ Basic dashboard made with D3.js and React. There is no build system to make this
 ```
 $ npm install
 $ npm run watch
-(open another terminal)
+(open another terminal or ctrl-c)
 $ npm run build
 $ npm start or npm run debug
 You can now find the dashboard on port 3000
