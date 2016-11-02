@@ -25,7 +25,7 @@ class LikeChart extends React.Component {
         left: 40
       };
     var width = window.innerWidth - margin.left - margin.right;
-    var height = window.innerHeight*(3/4) - margin.top - margin.bottom;
+    var height = window.innerHeight - margin.top - margin.bottom;
 
     //Draw canvas
     var svg = d3.select(".wrapper").append("svg")
@@ -34,9 +34,9 @@ class LikeChart extends React.Component {
         .attr("align", "center")
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+    var colors = ["#e82600", "#fb8c00", "#f9cc00"]
     //Scales and axis
-    var x = d3.scaleLinear().range([0, width*(2/3)]);
+    var x = d3.scaleLinear().range([0, width*(3/4)]);
     var y = d3.scaleBand().range([height, 0]);
     var xAxis = d3.axisTop(x).ticks(10);
     var yAxis = d3.axisLeft(y);
@@ -51,15 +51,35 @@ class LikeChart extends React.Component {
     svg.append("g")
         .attr("class", "x axis")
         .call(xAxis)
-        .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")");
+        .attr("transform", "translate(" + width*(1/4) + "," + 0 + ")");
     svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
-        .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")");
+        .attr("transform", "translate(" + width*(1/4) + "," + 0 + ")");
 
     //Insert initial data
     this.insert(svg, data, width, x, y)
     this.setState({svg: svg});
+
+    var legend = svg.selectAll(".legend")
+      .data(["Dislike", "Like", "SuperLike"])
+      .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(" + i*Math.sqrt(i)*70 + "," + height + ")"; })
+      .style("font", "12px 'Roboto'");
+
+    legend.append("rect")
+      .attr("x", width/2 + 4)
+      .attr("width", 18)
+      .attr("height", 18)
+      .attr("fill", function(d, i) {return colors[i]});
+
+    legend.append("text")
+      .attr("x", width/2)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .attr("text-anchor", "end")
+      .text(function(d) { return d; });
   }
 
   //Animation step
@@ -77,10 +97,10 @@ class LikeChart extends React.Component {
         };
       let svg = this.state.svg
       var width = window.innerWidth - margin.left - margin.right;
-      var height = window.innerHeight*(3/4) - margin.top - margin.bottom;
+      var height = window.innerHeight - margin.top - margin.bottom;
 
       //Scales and axis
-      var x = d3.scaleLinear().range([0, width*(2/3)]);
+      var x = d3.scaleLinear().range([0, width*(3/4)]);
       var y = d3.scaleBand().range([height, 0]);
       x.domain([0, d3.max(data, function(d) { return d.likes + d.dislikes + d.superlikes; })]);
       y.domain(data.map(function(d) { return d.label; })).paddingInner(0.1).paddingOuter(0.5);
@@ -110,8 +130,8 @@ class LikeChart extends React.Component {
         .attr("height", y.bandwidth())
         .attr("y", function(d) { return y(d.label); })
         .attr("width", function(d) { return x(d.dislikes); })
-        .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")")
-        .attr("fill", "#212121")
+        .attr("transform", "translate(" + width*(1/4) + "," + 0 + ")")
+        .attr("fill", "#e82600")
     //Draw like bar
     svg.selectAll(".bar2")
         .data(data)
@@ -121,8 +141,8 @@ class LikeChart extends React.Component {
         .attr("height", y.bandwidth())
         .attr("y", function(d) { return y(d.label); })
         .attr("width", function(d) { return x(d.likes); })
-        .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")")
-        .attr("fill", "#3e2723")
+        .attr("transform", "translate(" + width*(1/4) + "," + 0 + ")")
+        .attr("fill", "#fb8c00")
     //Draw superlike bar
     svg.selectAll(".bar3")
         .data(data)
@@ -132,8 +152,8 @@ class LikeChart extends React.Component {
         .attr("height", y.bandwidth())
         .attr("y", function(d) { return y(d.label); })
         .attr("width", function(d) { return x(d.superlikes); })
-        .attr("transform", "translate(" + width*(1/3) + "," + 0 + ")")
-        .attr("fill", "#bf360c")
+        .attr("transform", "translate(" + width*(1/4) + "," + 0 + ")")
+        .attr("fill", "#f9cc00")
   }
 
   //Updates the graph by animating the transition
